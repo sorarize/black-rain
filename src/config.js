@@ -45,3 +45,21 @@ export const INITIAL_CAMERA = {
   target: [0, SKY_HEIGHT * .15, 0],
   up: [0, 1, 0],
 };
+
+export const CAMERA_DISTANCE_LIMITS = {
+  MIN: 600,
+  MAX: 1000
+};
+
+export const CAMERA_ROTATION_LIMITS = {
+  // Horizontal rotation limits (radians)
+  PHI: {
+    MIN: -Math.PI * 0.2,  // Left
+    MAX: Math.PI * 0.2    // Right
+  },
+  // Vertical rotation limits (radians)
+  THETA: {
+    MIN: 0,   // Bottom
+    MAX: Math.PI * 0.5   // Top
+  }
+};
