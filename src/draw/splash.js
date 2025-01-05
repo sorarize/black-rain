@@ -3,22 +3,28 @@ import splashFrag from '../shaders/splash.frag?raw';
 import { regl } from '../renderer';
 import { timeScale, getTime } from '../time';
 import { random } from '../utils';
+import { RAIN_COUNT } from '../config';
+
+const MAX_SPLASHES = RAIN_COUNT * 7; // 限制最大數量
 
 export let splashes = [];
 
 const splashBuffer = regl.buffer({
   usage: 'dynamic',
-  data: [[0, 0, 0, 1]]
+  type: 'float',
+  data: new Float32Array(MAX_SPLASHES * 4).fill(0)
 });
 
 const splashStartTimeBuffer = regl.buffer({
   usage: 'dynamic',
-  data: [0]
+  type: 'float',
+  data: new Float32Array(MAX_SPLASHES).fill(0)
 });
 
 const splashAngleBuffer = regl.buffer({
   usage: 'dynamic',
-  data: [0]
+  type: 'float',
+  data: new Float32Array(MAX_SPLASHES).fill(0)
 });
 
 export function addSplash(x, z) {
@@ -27,6 +33,12 @@ export function addSplash(x, z) {
   const wholeAngle = Math.PI / 2;
   const unitAngle = wholeAngle / (count - 1);
   const startAngle = -wholeAngle / 2;
+
+  // 檢查是否超過最大限制
+  if (splashes.length + count > MAX_SPLASHES) {
+    // 如果超過限制，移除最舊的
+    splashes.splice(0, count);
+  }
 
   for (let i = 0; i < count; i++) {
     const angle = startAngle + i * unitAngle;
@@ -43,27 +55,32 @@ export function addSplash(x, z) {
 
 export function updateSplashes() {
   const now = getTime();
-  const oldLength = splashes.length;
 
   splashes = splashes.filter(splash => {
     const timeDiff = now - splash.startTime;
     return timeDiff <= .1 / timeScale.value;
   });
 
-  // 只有當有 splashes 或者 splashes 數量改變時才更新 buffer
-  if (splashes.length > 0 || oldLength !== splashes.length) {
-    splashBuffer({
-      data: splashes.length > 0 ? splashes.map(s => [s.x, s.y, s.z, s.length]) : [[0, 0, 0, 1]]
-    });
+  // 更新所有 buffer
+  const positionData = new Float32Array(MAX_SPLASHES * 4);
+  const timeData = new Float32Array(MAX_SPLASHES);
+  const angleData = new Float32Array(MAX_SPLASHES);
 
-    splashStartTimeBuffer({
-      data: splashes.length > 0 ? splashes.map(s => s.startTime) : [0]
-    });
+  // 填充實際數據
+  splashes.forEach((s, i) => {
+    const baseIndex = i * 4;
+    positionData[baseIndex] = s.x;
+    positionData[baseIndex + 1] = s.y;
+    positionData[baseIndex + 2] = s.z;
+    positionData[baseIndex + 3] = s.length;
+    timeData[i] = s.startTime;
+    angleData[i] = s.angle;
+  });
 
-    splashAngleBuffer({
-      data: splashes.length > 0 ? splashes.map(s => s.angle) : [0]
-    });
-  }
+  // 使用 subdata 更新 buffer
+  splashBuffer.subdata(positionData);
+  splashStartTimeBuffer.subdata(timeData);
+  splashAngleBuffer.subdata(angleData);
 }
 
 const splashVertices = [
@@ -82,7 +99,9 @@ export const drawSplashes = regl({
     position: splashVertices,
     instancePosition: {
       buffer: splashBuffer,
-      divisor: 1
+      divisor: 1,
+      stride: 16,  // 4 個 float * 4 bytes
+      offset: 0
     },
     instanceAngle: {
       buffer: splashAngleBuffer,

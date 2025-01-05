@@ -22,10 +22,12 @@ function updateScene() {
 
 // 渲染循環
 regl.frame(() => {
-  const viewMatrix = camera.view();
-  const projectionMatrix = computeProjectionMatrix(canvas.width, canvas.height);
-
   updateScene();
+
+  const props = {
+    view: camera.view(),
+    projection: computeProjectionMatrix(canvas.width, canvas.height),
+  };
 
   fbo.use(() => {
     regl.clear({
@@ -33,30 +35,11 @@ regl.frame(() => {
       depth: 1
     });
 
-    drawPlane({
-      view: viewMatrix,
-      projection: projectionMatrix,
-    });
-
-    drawRain({
-      view: viewMatrix,
-      projection: projectionMatrix
-    });
-
-    if (circles.length > 0) {
-      drawCircles({
-        view: viewMatrix,
-        projection: projectionMatrix
-      });
-    }
+    drawPlane(props);
+    drawRain(props);
+    drawCircles(props);
   });
 
   drawPost();
-
-  if (splashes.length > 0) {
-    drawSplashes({
-      view: viewMatrix,
-      projection: projectionMatrix
-    });
-  }
+  drawSplashes(props);
 });

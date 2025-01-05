@@ -1,9 +1,11 @@
 import circleVert from "../shaders/circle.vert?raw";
 import circleFrag from "../shaders/circle.frag?raw";
-import { PLANE_SIZE, RAIN_SPEED } from "../config";
+import { PLANE_SIZE, RAIN_COUNT, RAIN_SPEED } from "../config";
 import { random } from "../utils";
 import { regl } from "../renderer";
 import { timeScale, getTime } from "../time";
+
+const MAX_CIRCLES = RAIN_COUNT * 5; // 限制最大數量
 
 export let circles = [];
 
@@ -11,17 +13,20 @@ const circleData = createCircleVertices();
 
 const circleBuffer = regl.buffer({
   usage: 'dynamic',
-  data: [[0, 0, 0]]
+  length: MAX_CIRCLES * 12, // 預分配 buffer 大小 (3 個 float32 * 4 bytes * MAX_CIRCLES)
+  data: new Float32Array(MAX_CIRCLES * 3).fill(0)
 });
 
 const startTimeBuffer = regl.buffer({
   usage: 'dynamic',
-  data: [0]
+  length: MAX_CIRCLES * 4, // 預分配 buffer 大小 (1 個 float32 * 4 bytes * MAX_CIRCLES)
+  data: new Float32Array(MAX_CIRCLES).fill(0)
 });
 
 const maxRadiusBuffer = regl.buffer({
   usage: 'dynamic',
-  data: [0]
+  length: MAX_CIRCLES * 4, // 預分配 buffer 大小 (1 個 float32 * 4 bytes * MAX_CIRCLES)
+  data: new Float32Array(MAX_CIRCLES).fill(0)
 });
 
 const isOuterBuffer = regl.buffer({
@@ -31,7 +36,10 @@ const isOuterBuffer = regl.buffer({
 
 export function addCircle(x, z) {
   const zFactor = Math.max(0.5, (z + PLANE_SIZE) / (PLANE_SIZE * 2));
-  const circleCount = random(2, 10) * zFactor;
+  const circleCount = Math.min(~~(random(2, 10) * zFactor), MAX_CIRCLES - circles.length);
+
+  if (circleCount <= 0) return;
+
   const maxRadius = random(50, 60) * zFactor * 3;
 
   for (let i = 0; i < circleCount; i++) {
@@ -49,24 +57,26 @@ export function updateCircles() {
   const now = getTime();
   const oldLength = circles.length;
 
-  // 更新每個圓形的狀態，移除超過 2 秒的圓形
   circles = circles.filter(circle => {
-    return now - circle.startTime <= 2.0;
+    return now - circle.startTime <= 1.0;
   });
 
-  // 只在 circles 數組有變化時才更新 buffer
   if (circles.length !== oldLength || circles.length > 0) {
-    circleBuffer({
-      data: circles.length > 0 ? circles.map(c => [c.x, c.y, c.z]) : [[0, 0, 0]]
+    const positionData = new Float32Array(MAX_CIRCLES * 3);
+    const timeData = new Float32Array(MAX_CIRCLES);
+    const radiusData = new Float32Array(MAX_CIRCLES);
+
+    circles.forEach((c, i) => {
+      positionData[i * 3] = c.x;
+      positionData[i * 3 + 1] = c.y;
+      positionData[i * 3 + 2] = c.z;
+      timeData[i] = c.startTime;
+      radiusData[i] = c.maxRadius;
     });
 
-    startTimeBuffer({
-      data: circles.length > 0 ? circles.map(c => c.startTime) : [0]
-    });
-
-    maxRadiusBuffer({
-      data: circles.length > 0 ? circles.map(c => c.maxRadius) : [0]
-    });
+    circleBuffer.subdata(positionData);
+    startTimeBuffer.subdata(timeData);
+    maxRadiusBuffer.subdata(radiusData);
   }
 }
 
