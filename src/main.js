@@ -1,17 +1,62 @@
-import p5 from 'p5'
-import './style.scss'
+import './style.scss';
 
-new p5((p) => {
-  p.setup = () => {
-    p.createCanvas(p.windowWidth, p.windowHeight)
-  }
+import { camera, computeProjectionMatrix, setupCameraControls } from './camera';
 
-  p.draw = () => {
-    p.background(220)
-    p.ellipse(p.width/2, p.height/2, 80, 80)
-  }
+import { updateTime } from './time.js';
+import { regl, canvas, fbo } from './renderer.js';
+import { circles, drawCircles, updateCircles } from './draw/circle.js';
+import { splashes, drawSplashes, updateSplashes } from './draw/splash.js';
+import { drawRain, updateRain } from './draw/rain.js';
+import { drawPost } from './draw/post.js';
+import { drawPlane } from './draw/plane.js';
 
-  p.windowResized = () => {
-    p.resizeCanvas(p.windowWidth, p.windowHeight)
+setupCameraControls(canvas);
+
+// 更新場景
+function updateScene() {
+  updateTime();
+  updateRain();
+  updateCircles();
+  updateSplashes();
+}
+
+// 渲染循環
+regl.frame(() => {
+  const viewMatrix = camera.view();
+  const projectionMatrix = computeProjectionMatrix(canvas.width, canvas.height);
+
+  updateScene();
+
+  fbo.use(() => {
+    regl.clear({
+      color: [0, 0, 0, 1],
+      depth: 1
+    });
+
+    drawPlane({
+      view: viewMatrix,
+      projection: projectionMatrix,
+    });
+
+    drawRain({
+      view: viewMatrix,
+      projection: projectionMatrix
+    });
+
+    if (circles.length > 0) {
+      drawCircles({
+        view: viewMatrix,
+        projection: projectionMatrix
+      });
+    }
+  });
+
+  drawPost();
+
+  if (splashes.length > 0) {
+    drawSplashes({
+      view: viewMatrix,
+      projection: projectionMatrix
+    });
   }
-})
+});

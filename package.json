@@ -9,10 +9,22 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "p5": "^1.9.1"
+    "gl-matrix": "^3.4.3",
+    "orbit-camera": "^1.0.0",
+    "orbit-controls": "^1.2.4",
+    "p5": "^1.9.1",
+    "regl": "^2.1.1",
+    "scheduling": "^1.4.4"
   },
   "devDependencies": {
-    "vite": "^5.1.6",
-    "sass": "^1.71.1"
-  }
+    "@types/node": "^22.10.5",
+    "sass": "^1.71.1",
+    "typescript": "^5.7.2",
+    "vite": "^5.1.6"
+  },
+  "main": "vite.config.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }
