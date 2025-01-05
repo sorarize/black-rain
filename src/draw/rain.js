@@ -22,6 +22,26 @@ export const rainPositions = Array(RAIN_COUNT).fill().map(() => ({
   hasRipple: false
 }));
 
+function resetRain(drop) {
+  // Calculate horizontal displacement based on angle
+  const angleRad = RAIN_ANGLE * Math.PI / 180;
+  const horizontalDisplacement = SKY_HEIGHT * Math.tan(angleRad);
+
+  // Calculate spawn range based on angle
+  // We want the rain to be visible in the viewing area when it hits the ground
+  const viewRange = PLANE_SIZE * 2;  // Total visible range
+  const spawnOffset = horizontalDisplacement;  // Offset due to angle
+
+  // Adjust spawn position to ensure rain falls within view
+  const minX = -viewRange - spawnOffset;
+  const maxX = viewRange - spawnOffset;
+
+  drop.x = random(minX, maxX);
+  drop.y = SKY_HEIGHT;
+  drop.z = random(-2, .5) * PLANE_SIZE;
+  drop.hasRipple = false;
+}
+
 // Update rain positions
 export function updateRain() {
   const time = getTime();
@@ -30,7 +50,7 @@ export function updateRain() {
 
   const moveDistance = RAIN_SPEED * deltaTime * 60;
 
-  rainPositions.forEach((drop, i) => {
+  rainPositions.forEach(drop => {
     // Calculate x and y movement based on angle
     drop.x += drop.length * moveDistance * rainDirectionVec[0] * .99;
     drop.y += drop.length * moveDistance * rainDirectionVec[1];
@@ -42,11 +62,7 @@ export function updateRain() {
     }
 
     if (drop.y < -drop.length) {
-      // reset
-      drop.y = SKY_HEIGHT;
-      drop.x = (RAIN_ANGLE == 0 ? random(-2, 2) : random(-1.5, .5)) * PLANE_SIZE;
-      drop.z = random(-2, .5) * PLANE_SIZE;
-      drop.hasRipple = false;
+      resetRain(drop);
     }
   });
 

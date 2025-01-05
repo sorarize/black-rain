@@ -25,7 +25,7 @@ export function reset() {
 
 document.addEventListener('keydown', (e) => {
   if (e.key === ' ') {
-    timeScale.value = timeScale.value > .5 ? slow() : reset();
+    timeScale.value > .5 ? slow() : reset();
   }
 });
 
