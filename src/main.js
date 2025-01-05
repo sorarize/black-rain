@@ -4,8 +4,8 @@ import { camera, computeProjectionMatrix, setupCameraControls } from './camera';
 
 import { updateTime } from './time.js';
 import { regl, canvas, fbo } from './renderer.js';
-import { circles, drawCircles, updateCircles } from './draw/circle.js';
-import { splashes, drawSplashes, updateSplashes } from './draw/splash.js';
+import { drawCircles, updateCircles } from './draw/circle.js';
+import { drawSplashes, updateSplashes } from './draw/splash.js';
 import { drawRain, updateRain } from './draw/rain.js';
 import { drawPost } from './draw/post.js';
 import { drawPlane } from './draw/plane.js';

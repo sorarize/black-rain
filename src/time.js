@@ -15,10 +15,36 @@ export function updateTime() {
   startTime = now;
 }
 
+export function slow() {
+  timeScale.value = .03;
+}
+
+export function reset() {
+  timeScale.value = 1;
+}
+
 document.addEventListener('keydown', (e) => {
   if (e.key === ' ') {
-    timeScale.value = timeScale.value > .5 ? .03 : 1;
+    timeScale.value = timeScale.value > .5 ? slow() : reset();
   }
 });
+
+function handleStart(e) {
+  e.preventDefault();
+  slow();
+}
+
+function handleEnd(e) {
+  e.preventDefault();
+  reset();
+}
+
+document.addEventListener('mousedown', handleStart);
+document.addEventListener('mouseup', handleEnd);
+document.addEventListener('mouseleave', handleEnd);
+document.addEventListener('touchstart', handleStart);
+document.addEventListener('touchend', handleEnd);
+document.addEventListener('touchcancel', handleEnd);
+
 
 export { timeScale };
