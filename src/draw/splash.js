@@ -28,10 +28,10 @@ const splashAngleBuffer = regl.buffer({
 });
 
 export function addSplash(x, z) {
-  const length = random(1, 2);
-  const count = ~~random(5, 8);
-  const wholeAngle = Math.PI / 2;
-  const unitAngle = wholeAngle / (count - 1);
+  const length = random(1, 3);
+  const count = ~~random(3, 6);
+  const unitAngle = 15 * Math.PI / 180;
+  const wholeAngle = unitAngle * (count - 1);
   const startAngle = -wholeAngle / 2;
 
   // Check if exceeding maximum limit
@@ -83,20 +83,18 @@ export function updateSplashes() {
   splashAngleBuffer.subdata(angleData);
 }
 
-const splashVertices = [
-  [0, -1, 0],
-  [-0.1, -1, 0],
-  [0, 1, 0],
-  [0.1, -1, 0],
-  [0, 1, 0],
-  [-0.1, -1, 0]
+
+const splashWidth = .8;
+const splash = [
+  [0, -1, 0], [0, -1, 0], [splashWidth, 1, 0],
+  [0, -1, 0], [0, 1, 0], [splashWidth, 1, 0],
 ];
 
 export const drawSplashes = regl({
   vert: splashVert,
   frag: splashFrag,
   attributes: {
-    position: splashVertices,
+    position: splash,
     instancePosition: {
       buffer: splashBuffer,
       divisor: 1,
