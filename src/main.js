@@ -1,5 +1,6 @@
 import './style.scss';
 
+import './instruction.js';
 import { camera, computeProjectionMatrix, setupCameraControls } from './camera';
 
 import { updateTime } from './time.js';
@@ -43,14 +44,3 @@ regl.frame(() => {
   drawPost();
   drawSplashes(props);
 });
-
-// Hide instruction after 5 seconds
-const instruction = document.getElementById('instruction');
-const hideInstruction = () => {
-  instruction.classList.add('hide');
-};
-
-document.body.addEventListener('mousedown', hideInstruction);
-document.body.addEventListener('touchstart', hideInstruction);
-
-setTimeout(hideInstruction, 5000);
