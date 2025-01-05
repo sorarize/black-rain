@@ -6,7 +6,9 @@ attribute float instanceStartTime;
 uniform mat4 projection, view;
 uniform float timeScale;
 uniform float currentTime;
+uniform float planeSize;  // Add planeSize uniform
 varying float vProgress;  // 添加 varying 變數
+varying float vPosZ;
 
 void main() {
   vec3 pos = position;
@@ -45,6 +47,9 @@ void main() {
 
   // 5. 最後加上位置偏移
   pos += instancePosition.xyz;
+
+  // 6. 計算 z 值
+  vPosZ = mix(.3, 1., (pos.z + planeSize) / 2. / planeSize);
 
   gl_Position = projection * view * vec4(pos, 1);
 }

@@ -3,7 +3,7 @@ import splashFrag from '../shaders/splash.frag?raw';
 import { regl } from '../renderer';
 import { timeScale, getTime } from '../time';
 import { random } from '../utils';
-import { RAIN_COUNT } from '../config';
+import { RAIN_COUNT, PLANE_SIZE } from '../config';
 
 const MAX_SPLASHES = RAIN_COUNT * 7; // Maximum number of splash effects
 
@@ -83,7 +83,6 @@ export function updateSplashes() {
   splashAngleBuffer.subdata(angleData);
 }
 
-
 const splashWidth = .8;
 const splash = [
   [0, -1, 0], [0, -1, 0], [splashWidth, 1, 0],
@@ -114,7 +113,8 @@ export const drawSplashes = regl({
     view: regl.prop('view'),
     projection: regl.prop('projection'),
     timeScale: () => timeScale.value,
-    currentTime: () => getTime()
+    currentTime: () => getTime(),
+    planeSize: PLANE_SIZE
   },
   blend: {
     enable: true,
