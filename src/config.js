@@ -1,9 +1,41 @@
+import { random, pick, randomSign } from "./utils";
+
+export const level = pick({
+  Drizzle: 1,
+  Shower: 1,
+  Torrential: 1,
+});
+
+const lengthMap = {
+  Drizzle: 20,
+  Shower: 100,
+  Torrential: 100,
+}
+
+const speedMap = {
+  Drizzle: 2,
+  Shower: 1,
+  Torrential: 1,
+}
+
+const rainCountMap = {
+  Drizzle: 200,
+  Shower: 2000,
+  Torrential: 5000,
+};
+
+const angleMap = {
+  Drizzle: 0,
+  Shower: random(5, 10) * randomSign(),
+  Torrential: 20,
+};
+
 export const SKY_HEIGHT = 2000;
 export const PLANE_SIZE = 600;
-export const RAIN_COUNT = 2000;
-export const RAIN_LENGTH = 100;
-export const RAIN_SPEED = .7;
-export const RAIN_ANGLE = -19;  // degree
+export const RAIN_COUNT = rainCountMap[level];
+export const RAIN_LENGTH = lengthMap[level];
+export const RAIN_SPEED = speedMap[level];
+export const RAIN_ANGLE = angleMap[level];
 
 const distance = 800;
 export const INITIAL_CAMERA = {

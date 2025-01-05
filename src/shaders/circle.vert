@@ -15,7 +15,7 @@ varying float vProgress;  // 傳遞給 fragment shader
 varying vec3 vPosition;  // 傳遞世界座標到 fragment shader
 varying float vDiscard;
 
-const float ANIMATION_DURATION = 1.2;  // 動畫持續時間（秒）
+const float ANIMATION_DURATION = 2.;  // 動畫持續時間（秒）
 
 void main() {
   float deltaTime = currentTime - instanceStartTime;

@@ -17,5 +17,5 @@ void main() {
   float fadeSpeed = mix(2., 1., timeScale);  // timeScale 小時衰減更快
   alpha = pow(alpha, fadeSpeed);
 
-  gl_FragColor = vec4(1.0, 1.0, 1.0, alpha * .5);
+  gl_FragColor = vec4(1.0, 1.0, 1.0, alpha);
 }

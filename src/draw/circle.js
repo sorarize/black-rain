@@ -1,11 +1,11 @@
 import circleVert from "../shaders/circle.vert?raw";
 import circleFrag from "../shaders/circle.frag?raw";
 import { PLANE_SIZE, RAIN_COUNT, RAIN_SPEED } from "../config";
-import { random } from "../utils";
+import { random, xx } from "../utils";
 import { regl } from "../renderer";
 import { timeScale, getTime } from "../time";
 
-const MAX_CIRCLES = RAIN_COUNT * 5; // Maximum number of circles
+const MAX_CIRCLES = RAIN_COUNT * 40; // Maximum number of circles
 
 export let circles = [];
 
@@ -36,11 +36,13 @@ const isOuterBuffer = regl.buffer({
 
 export function addCircle(x, z) {
   const zFactor = Math.max(0.5, (z + PLANE_SIZE) / (PLANE_SIZE * 2));
-  const circleCount = Math.min(~~(random(2, 10) * zFactor), MAX_CIRCLES - circles.length);
+  const maxRadius = random(30, 60) * zFactor * 3;
+  const desiredCircleCount = ~~(maxRadius / 10);
+
+  const remainingSpace = MAX_CIRCLES - circles.length;
+  const circleCount = Math.min(desiredCircleCount, remainingSpace);
 
   if (circleCount <= 0) return;
-
-  const maxRadius = random(50, 60) * zFactor * 3;
 
   for (let i = 0; i < circleCount; i++) {
     circles.push({
@@ -48,7 +50,7 @@ export function addCircle(x, z) {
       y: .1,
       z,
       maxRadius,
-      startTime: getTime() + i * zFactor * .4
+      startTime: getTime() + i * zFactor * .3
     });
   }
 }
@@ -58,7 +60,7 @@ export function updateCircles() {
   const oldLength = circles.length;
 
   circles = circles.filter(circle => {
-    return now - circle.startTime <= 1.0;
+    return now - circle.startTime <= 1.5;
   });
 
   if (circles.length !== oldLength || circles.length > 0) {

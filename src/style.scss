@@ -13,6 +13,10 @@ html, body {
   -webkit-tap-highlight-color: transparent;
 }
 
+html {
+  font-size: 20px;
+}
+
 canvas {
   touch-action: none;
   -webkit-touch-callout: none;
@@ -24,21 +28,28 @@ canvas {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: #fff;
-  background: linear-gradient(45deg, #000000AA, #00000000);
-  padding: 1rem;
-  border-radius: 100px;
-  width: 200px;
-  height: 200px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: Arial, sans-serif;
-  font-size: 1rem;
-  opacity: 1;
   transition: opacity 0.5s ease;
+  opacity: 1;
   pointer-events: none;
   z-index: 9999;
+
+  font-family: serif;
+  font-size: 1rem;
+  text-align: center;
+  color: #000000;
+  // padding: 1em 2em;
+  // background: linear-gradient(45deg, #000000AA, #00000000);
+
+  h1 {
+    font-size: 1.8rem;
+    font-weight: 400;
+  }
+
+  .hold {
+    margin-top: 1em;
+    font-size: 15px;
+    font-family: sans-serif;
+  }
 
   &.hide {
     opacity: 0;
