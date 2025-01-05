@@ -5,7 +5,7 @@ import { timeScale, getTime } from '../time';
 import { random } from '../utils';
 import { RAIN_COUNT } from '../config';
 
-const MAX_SPLASHES = RAIN_COUNT * 7; // 限制最大數量
+const MAX_SPLASHES = RAIN_COUNT * 7; // Maximum number of splash effects
 
 export let splashes = [];
 
@@ -34,9 +34,9 @@ export function addSplash(x, z) {
   const unitAngle = wholeAngle / (count - 1);
   const startAngle = -wholeAngle / 2;
 
-  // 檢查是否超過最大限制
+  // Check if exceeding maximum limit
   if (splashes.length + count > MAX_SPLASHES) {
-    // 如果超過限制，移除最舊的
+    // Remove oldest splashes if limit exceeded
     splashes.splice(0, count);
   }
 
@@ -61,12 +61,12 @@ export function updateSplashes() {
     return timeDiff <= .1 / timeScale.value;
   });
 
-  // 更新所有 buffer
+  // Update all buffers
   const positionData = new Float32Array(MAX_SPLASHES * 4);
   const timeData = new Float32Array(MAX_SPLASHES);
   const angleData = new Float32Array(MAX_SPLASHES);
 
-  // 填充實際數據
+  // Fill actual data
   splashes.forEach((s, i) => {
     const baseIndex = i * 4;
     positionData[baseIndex] = s.x;
@@ -77,7 +77,7 @@ export function updateSplashes() {
     angleData[i] = s.angle;
   });
 
-  // 使用 subdata 更新 buffer
+  // Update buffers using subdata
   splashBuffer.subdata(positionData);
   splashStartTimeBuffer.subdata(timeData);
   splashAngleBuffer.subdata(angleData);
@@ -100,7 +100,7 @@ export const drawSplashes = regl({
     instancePosition: {
       buffer: splashBuffer,
       divisor: 1,
-      stride: 16,  // 4 個 float * 4 bytes
+      stride: 16,  // 4 floats * 4 bytes
       offset: 0
     },
     instanceAngle: {

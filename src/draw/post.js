@@ -2,12 +2,12 @@ import { regl, fbo } from '../renderer.js';
 import postVert from '../shaders/post.vert?raw';
 import postFrag from '../shaders/post.frag?raw';
 
-// 創建後處理的四邊形
+// Create post-processing quad
 const quadVertices = [
   -1, -1,
   1, -1,
-  -1, 1,
-  1, -1,
+  1, 1,
+  -1, -1,
   1, 1,
   -1, 1
 ];

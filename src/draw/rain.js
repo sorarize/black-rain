@@ -9,11 +9,11 @@ import { addSplash } from './splash';
 
 let lastTime = 0;
 
-// 計算雨的方向向量
-const angleRad = RAIN_ANGLE * Math.PI / 180;  // 轉換為弧度
-const rainDirectionVec = [Math.sin(angleRad), -Math.cos(angleRad)];  // 作為陣列
+// Calculate rain direction vector
+const angleRad = RAIN_ANGLE * Math.PI / 180;  // Convert to radians
+const rainDirectionVec = [Math.sin(angleRad), -Math.cos(angleRad)];  // As array
 
-// 初始化雨滴位置
+// Initialize rain drop positions
 export const rainPositions = Array(RAIN_COUNT).fill().map(() => ({
   x: random(-1, 1) * PLANE_SIZE,
   y: random(SKY_HEIGHT),
@@ -22,7 +22,7 @@ export const rainPositions = Array(RAIN_COUNT).fill().map(() => ({
   hasRipple: false
 }));
 
-// 更新雨滴位置的函數
+// Update rain positions
 export function updateRain() {
   const time = getTime();
   const deltaTime = time - lastTime;
@@ -31,7 +31,7 @@ export function updateRain() {
   const moveDistance = RAIN_SPEED * deltaTime * 60;
 
   rainPositions.forEach((drop, i) => {
-    // 根據角度計算 x 和 y 的移動
+    // Calculate x and y movement based on angle
     drop.x += drop.length * moveDistance * rainDirectionVec[0] * .99;
     drop.y += drop.length * moveDistance * rainDirectionVec[1];
 
@@ -61,7 +61,7 @@ const rainDrop = [
   [-rainWidth, -1, 0], [0, 1, 0], [0, 1, 0],
 ];
 
-// 創建動態 buffer
+// Create dynamic buffer
 export const rainBuffer = regl.buffer({
   usage: 'dynamic',
   data: rainPositions.map(p => [p.x, p.y, p.z, p.length])

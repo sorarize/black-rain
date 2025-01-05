@@ -5,7 +5,7 @@ import { random } from "../utils";
 import { regl } from "../renderer";
 import { timeScale, getTime } from "../time";
 
-const MAX_CIRCLES = RAIN_COUNT * 5; // 限制最大數量
+const MAX_CIRCLES = RAIN_COUNT * 5; // Maximum number of circles
 
 export let circles = [];
 
@@ -13,19 +13,19 @@ const circleData = createCircleVertices();
 
 const circleBuffer = regl.buffer({
   usage: 'dynamic',
-  length: MAX_CIRCLES * 12, // 預分配 buffer 大小 (3 個 float32 * 4 bytes * MAX_CIRCLES)
+  length: MAX_CIRCLES * 12, // Pre-allocate buffer size (3 float32 * 4 bytes * MAX_CIRCLES)
   data: new Float32Array(MAX_CIRCLES * 3).fill(0)
 });
 
 const startTimeBuffer = regl.buffer({
   usage: 'dynamic',
-  length: MAX_CIRCLES * 4, // 預分配 buffer 大小 (1 個 float32 * 4 bytes * MAX_CIRCLES)
+  length: MAX_CIRCLES * 4, // Pre-allocate buffer size (1 float32 * 4 bytes * MAX_CIRCLES)
   data: new Float32Array(MAX_CIRCLES).fill(0)
 });
 
 const maxRadiusBuffer = regl.buffer({
   usage: 'dynamic',
-  length: MAX_CIRCLES * 4, // 預分配 buffer 大小 (1 個 float32 * 4 bytes * MAX_CIRCLES)
+  length: MAX_CIRCLES * 4, // Pre-allocate buffer size (1 float32 * 4 bytes * MAX_CIRCLES)
   data: new Float32Array(MAX_CIRCLES).fill(0)
 });
 
@@ -82,15 +82,15 @@ export function updateCircles() {
 
 function createCircleVertices(segments = 32) {
   const vertices = [];
-  const isOuter = [];  // 新增：用於標識外圈頂點
+  const isOuter = [];  // Flag for outer vertices
   for (let i = 0; i <= segments; i++) {
     const theta = (i / segments) * 2 * Math.PI;
     const cos = Math.cos(theta);
     const sin = Math.sin(theta);
-    // 內圈頂點
+    // Inner vertex
     vertices.push(cos, sin);
     isOuter.push(0);
-    // 外圈頂點
+    // Outer vertex
     vertices.push(cos, sin);
     isOuter.push(1);
   }
@@ -102,7 +102,7 @@ export const drawCircles = regl({
   frag: circleFrag,
   attributes: {
     position: circleData.vertices,
-    isOuter: isOuterBuffer,  // 新增 isOuter attribute
+    isOuter: isOuterBuffer,  // Flag for outer vertices
     instancePosition: {
       buffer: circleBuffer,
       divisor: 1

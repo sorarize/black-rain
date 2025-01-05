@@ -12,7 +12,7 @@ import { drawPlane } from './draw/plane.js';
 
 setupCameraControls(canvas);
 
-// 更新場景
+// Update scene
 function updateScene() {
   updateTime();
   updateRain();
@@ -20,7 +20,7 @@ function updateScene() {
   updateSplashes();
 }
 
-// 渲染循環
+// Render loop
 regl.frame(() => {
   updateScene();
 
