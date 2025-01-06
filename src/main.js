@@ -3,7 +3,7 @@ import './style.scss';
 import './instruction.js';
 import { camera, computeProjectionMatrix, setupCameraControls } from './camera';
 
-import { updateTime } from './time.js';
+import { updateTime, handleStart, handleEnd } from './time.js';
 import { regl, canvas, fbo } from './renderer.js';
 import { drawCircles, updateCircles } from './draw/circle.js';
 import { drawSplashes, updateSplashes } from './draw/splash.js';
@@ -11,6 +11,13 @@ import { drawRain, updateRain } from './draw/rain.js';
 import { drawPost } from './draw/post.js';
 import { drawPlane } from './draw/plane.js';
 import resl from 'resl';
+
+canvas.addEventListener('mousedown', handleStart);
+canvas.addEventListener('mouseup', handleEnd);
+canvas.addEventListener('mouseleave', handleEnd);
+canvas.addEventListener('touchstart', handleStart);
+canvas.addEventListener('touchend', handleEnd);
+canvas.addEventListener('touchcancel', handleEnd);
 
 const assets = {
   lookup: './lut/lookup.png'

@@ -17,16 +17,16 @@ export function updateTime() {
 
 let isPaused = false;
 
-export function pause() {
+function pause() {
   timeScale.value = .0;
   isPaused = true;
 }
 
-export function slow() {
+function slow() {
   timeScale.value = .03;
 }
 
-export function reset() {
+function reset() {
   timeScale.value = 1;
   isPaused = false;
 }
@@ -37,7 +37,7 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-function handleStart(e) {
+export function handleStart(e) {
   e.preventDefault();
   if (isPaused) {
     return;
@@ -45,20 +45,12 @@ function handleStart(e) {
   slow();
 }
 
-function handleEnd(e) {
+export function handleEnd(e) {
   e.preventDefault();
   if (isPaused) {
     return;
   }
   reset();
 }
-
-document.addEventListener('mousedown', handleStart);
-document.addEventListener('mouseup', handleEnd);
-document.addEventListener('mouseleave', handleEnd);
-document.addEventListener('touchstart', handleStart);
-document.addEventListener('touchend', handleEnd);
-document.addEventListener('touchcancel', handleEnd);
-
 
 export { timeScale };
