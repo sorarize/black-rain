@@ -19,7 +19,7 @@ const float ANIMATION_DURATION = 2.;  // 動畫持續時間（秒）
 
 void main() {
   float deltaTime = currentTime - instanceStartTime;
-  float duration = max(1.5, ANIMATION_DURATION / (rainSpeed * 15.));
+  float duration = max(ANIMATION_DURATION, ANIMATION_DURATION / (rainSpeed * 15.));
   float progress = clamp(deltaTime / duration, 0., 1.0);
 
   // 計算基礎位置和方向
