@@ -1,7 +1,7 @@
 import rainVert from '../shaders/rain.vert?raw';
 import rainFrag from '../shaders/rain.frag?raw';
 import { SKY_HEIGHT, RAIN_COUNT, PLANE_SIZE, RAIN_SPEED, RAIN_LENGTH, RAIN_ANGLE } from '../config';
-import { random } from '../utils';
+import { random, noise } from '../utils';
 import { regl } from '../renderer';
 import { timeScale, getTime } from '../time';
 import { addCircle } from './circle';
@@ -19,7 +19,8 @@ export const rainPositions = Array(RAIN_COUNT).fill().map(() => ({
   y: random(SKY_HEIGHT),
   z: random(-2, .5) * PLANE_SIZE,
   length: random(.3, 1) * RAIN_LENGTH,
-  hasRipple: false
+  hasRipple: false,
+  intensity: Math.random()  // Add intensity for each raindrop
 }));
 
 function resetRain(drop) {
@@ -40,6 +41,12 @@ function resetRain(drop) {
   drop.y = SKY_HEIGHT;
   drop.z = random(-2, .5) * PLANE_SIZE;
   drop.hasRipple = false;
+  drop.intensity = Math.random();  // Reset intensity when recycling
+}
+
+// Calculate rain intensity
+function getRainIntensity(time) {
+  return 0.5 + noise(time * 0.2) * 0.5;
 }
 
 // Update rain positions
@@ -49,13 +56,14 @@ export function updateRain() {
   lastTime = time;
 
   const moveDistance = RAIN_SPEED * deltaTime * 60;
+  const intensity = getRainIntensity(time);
 
   rainPositions.forEach(drop => {
     // Calculate x and y movement based on angle
     drop.x += drop.length * moveDistance * rainDirectionVec[0] * .99;
     drop.y += drop.length * moveDistance * rainDirectionVec[1];
 
-    if (drop.y < drop.length && !drop.hasRipple) {
+    if (drop.y < drop.length && !drop.hasRipple && drop.intensity < intensity) {
       addCircle(drop.x, drop.z);
       addSplash(drop.x, drop.z);
       drop.hasRipple = true;
@@ -69,6 +77,9 @@ export function updateRain() {
   rainBuffer({
     data: rainPositions.map(p => [p.x, p.y, p.z, p.length])
   });
+  rainIntensityBuffer({
+    data: rainPositions.map(p => p.intensity)
+  });
 }
 
 const rainWidth = .8;
@@ -77,10 +88,16 @@ const rainDrop = [
   [-rainWidth, -1, 0], [0, 1, 0], [0, 1, 0],
 ];
 
-// Create dynamic buffer
+// Create dynamic buffer with extra component for seed
 export const rainBuffer = regl.buffer({
   usage: 'dynamic',
   data: rainPositions.map(p => [p.x, p.y, p.z, p.length])
+});
+
+// Create intensity buffer
+export const rainIntensityBuffer = regl.buffer({
+  usage: 'dynamic',
+  data: rainPositions.map(p => p.intensity)
 });
 
 export const drawRain = regl({
@@ -91,13 +108,19 @@ export const drawRain = regl({
     instancePosition: {
       buffer: rainBuffer,
       divisor: 1
+    },
+    instanceIntensity: {
+      buffer: rainIntensityBuffer,
+      divisor: 1
     }
   },
   uniforms: {
     view: regl.prop('view'),
     projection: regl.prop('projection'),
     rainDirection: rainDirectionVec,
-    timeScale: () => timeScale.value
+    timeScale: () => timeScale.value,
+    time: () => getTime(),
+    rainIntensity: () => getRainIntensity(getTime()) // Add rain intensity uniform
   },
   blend: {
     enable: true,
