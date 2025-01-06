@@ -1,6 +1,6 @@
 import circleVert from "../shaders/circle.vert";
 import circleFrag from "../shaders/circle.frag";
-import { PLANE_SIZE, RAIN_COUNT, RAIN_SPEED } from "../config";
+import { PLANE_SIZE, RAIN_COUNT, RAIN_RIPPLE_DURATION, RAIN_RIPPLE_RADIUS_RANGE, RAIN_SPEED } from "../config";
 import { random, xx } from "../utils";
 import { regl } from "../renderer";
 import { timeScale, getTime } from "../time";
@@ -36,8 +36,8 @@ const isOuterBuffer = regl.buffer({
 
 export function addCircle(x, z) {
   const zFactor = Math.max(0.5, (z + PLANE_SIZE) / (PLANE_SIZE * 2));
-  const maxRadius = random(30, 60) * zFactor * 3;
-  const desiredCircleCount = ~~(maxRadius / 10);
+  const maxRadius = random(...RAIN_RIPPLE_RADIUS_RANGE) * zFactor;
+  const desiredCircleCount = ~~(maxRadius / 20);
 
   const remainingSpace = MAX_CIRCLES - circles.length;
   const circleCount = Math.min(desiredCircleCount, remainingSpace);
@@ -50,7 +50,7 @@ export function addCircle(x, z) {
       y: .1,
       z,
       maxRadius,
-      startTime: getTime() + i * zFactor * .3
+      startTime: getTime() + i * RAIN_RIPPLE_DURATION / circleCount / 2
     });
   }
 }
@@ -60,7 +60,7 @@ export function updateCircles() {
   const oldLength = circles.length;
 
   circles = circles.filter(circle => {
-    return now - circle.startTime <= 1.5;
+    return now - circle.startTime <= RAIN_RIPPLE_DURATION;
   });
 
   if (circles.length !== oldLength || circles.length > 0) {
@@ -124,6 +124,7 @@ export const drawCircles = regl({
     projection: regl.prop('projection'),
     planeSize: PLANE_SIZE,
     rainSpeed: RAIN_SPEED,
+    rippleDuration: RAIN_RIPPLE_DURATION,
     timeScale: () => timeScale.value,
     thickness: 1
   },

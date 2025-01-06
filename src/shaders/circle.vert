@@ -7,6 +7,7 @@ attribute float isOuter;           // 新增：用來標識是否為外圈頂點
 
 uniform float currentTime;         // 當前時間
 uniform float rainSpeed;
+uniform float rippleDuration;
 uniform float planeSize;
 uniform float thickness;  // 基礎厚度
 uniform mat4 projection, view;
@@ -15,11 +16,9 @@ varying float vProgress;  // 傳遞給 fragment shader
 varying vec3 vPosition;  // 傳遞世界座標到 fragment shader
 varying float vDiscard;
 
-const float ANIMATION_DURATION = 2.;  // 動畫持續時間（秒）
-
 void main() {
   float deltaTime = currentTime - instanceStartTime;
-  float duration = max(ANIMATION_DURATION, ANIMATION_DURATION / (rainSpeed * 15.));
+  float duration = max(rippleDuration, rippleDuration / (rainSpeed * 15.));
   float progress = clamp(deltaTime / duration, 0., 1.0);
 
   // 計算基礎位置和方向
