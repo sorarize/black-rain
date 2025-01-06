@@ -1,5 +1,5 @@
-import circleVert from "../shaders/circle.vert?raw";
-import circleFrag from "../shaders/circle.frag?raw";
+import circleVert from "../shaders/circle.vert";
+import circleFrag from "../shaders/circle.frag";
 import { PLANE_SIZE, RAIN_COUNT, RAIN_SPEED } from "../config";
 import { random, xx } from "../utils";
 import { regl } from "../renderer";

@@ -1,5 +1,5 @@
-import rainVert from '../shaders/rain.vert?raw';
-import rainFrag from '../shaders/rain.frag?raw';
+import rainVert from '../shaders/rain.vert';
+import rainFrag from '../shaders/rain.frag';
 import { SKY_HEIGHT, RAIN_COUNT, PLANE_SIZE, RAIN_SPEED, RAIN_LENGTH, RAIN_ANGLE } from '../config';
 import { random, noise } from '../utils';
 import { regl } from '../renderer';

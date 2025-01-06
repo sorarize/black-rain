@@ -1,5 +1,5 @@
-import splashVert from '../shaders/splash.vert?raw';
-import splashFrag from '../shaders/splash.frag?raw';
+import splashVert from '../shaders/splash.vert';
+import splashFrag from '../shaders/splash.frag';
 import { regl } from '../renderer';
 import { timeScale, getTime } from '../time';
 import { random } from '../utils';

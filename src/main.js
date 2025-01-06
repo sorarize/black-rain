@@ -10,37 +10,55 @@ import { drawSplashes, updateSplashes } from './draw/splash.js';
 import { drawRain, updateRain } from './draw/rain.js';
 import { drawPost } from './draw/post.js';
 import { drawPlane } from './draw/plane.js';
+import resl from 'resl';
 
-setupCameraControls(canvas);
+const assets = {
+  lookup: './lut/lookup.png'
+};
 
-// Update scene
-function updateScene() {
-  updateTime();
-  updateRain();
-  updateCircles();
-  updateSplashes();
-}
+resl({
+  manifest: {
+    lookup: {
+      type: 'image',
+      src: assets.lookup,
+      parser: (data) => regl.texture({ data }),
+    }
+  },
+  onDone: ({ lookup }) => {
+    setupCameraControls(canvas);
 
-// Render loop
-regl.frame(() => {
-  updateScene();
+    // Update scene
+    function updateScene() {
+      updateTime();
+      updateRain();
+      updateCircles();
+      updateSplashes();
+    }
 
-  const props = {
-    view: camera.view(),
-    projection: computeProjectionMatrix(canvas.width, canvas.height),
-  };
+    // Render loop
+    regl.frame(() => {
+      updateScene();
 
-  fbo.use(() => {
-    regl.clear({
-      color: [0, 0, 0, 1],
-      depth: 1
+      const props = {
+        view: camera.view(),
+        projection: computeProjectionMatrix(canvas.width, canvas.height),
+      };
+
+      fbo.use(() => {
+        regl.clear({
+          color: [0, 0, 0, 1],
+          depth: 1
+        });
+
+        drawPlane(props);
+        drawRain(props);
+        drawCircles(props);
+      });
+
+      drawPost({
+        uLookup: lookup
+      });
+      drawSplashes(props);
     });
-
-    drawPlane(props);
-    drawRain(props);
-    drawCircles(props);
-  });
-
-  drawPost();
-  drawSplashes(props);
+  }
 });

@@ -1,6 +1,6 @@
 import { regl, fbo } from '../renderer.js';
-import postVert from '../shaders/post.vert?raw';
-import postFrag from '../shaders/post.frag?raw';
+import postVert from '../shaders/post.vert';
+import postFrag from '../shaders/post.frag';
 import { INVERT } from '../config.js';
 
 // Create post-processing quad
@@ -21,6 +21,7 @@ export const drawPost = regl({
   },
   uniforms: {
     texture: () => fbo,
+    uLookup: regl.prop('uLookup'),
     invert: INVERT
   },
   depth: { enable: false },

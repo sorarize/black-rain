@@ -11,12 +11,16 @@
   },
   "dependencies": {
     "gl-matrix": "^3.4.3",
+    "glsl-lut": "^1.1.3",
+    "glslify": "^7.1.1",
     "orbit-camera": "^1.0.0",
     "orbit-controls": "^1.2.4",
     "p5": "^1.9.1",
     "regl": "^2.1.1",
+    "resl": "^1.0.3",
     "scheduling": "^1.4.4",
-    "simplex-noise": "^4.0.3"
+    "simplex-noise": "^4.0.3",
+    "vite-plugin-glslify": "^2.1.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.5",

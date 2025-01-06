@@ -1,5 +1,5 @@
-import planeVert from '../shaders/plane.vert?raw';
-import planeFrag from '../shaders/plane.frag?raw';
+import planeVert from '../shaders/plane.vert';
+import planeFrag from '../shaders/plane.frag';
 
 import { regl } from '../renderer';
 import { PLANE_SIZE } from '../config';
