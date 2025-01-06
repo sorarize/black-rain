@@ -21,33 +21,42 @@ const splashStartTimeBuffer = regl.buffer({
   data: new Float32Array(MAX_SPLASHES).fill(0)
 });
 
-const splashAngleBuffer = regl.buffer({
+const splashDirectionBuffer = regl.buffer({
   usage: 'dynamic',
   type: 'float',
-  data: new Float32Array(MAX_SPLASHES).fill(0)
+  data: new Float32Array(MAX_SPLASHES * 3).fill(0)
 });
 
 export function addSplash(x, z) {
-  const length = random(1, 4);
-  const count = ~~random(3, 8);
-  const unitAngle = 15 * Math.PI / 180;
-  const wholeAngle = unitAngle * (count - 1);
-  const startAngle = -wholeAngle / 2;
+  const length = random(1, 3);
+  const count = ~~random(6, 18);
+
+  // 控制水花散射的角度範圍（0 表示垂直向上，PI/2 表示水平）
+  const maxTheta = Math.PI / 4;
 
   // Check if exceeding maximum limit
   if (splashes.length + count > MAX_SPLASHES) {
-    // Remove oldest splashes if limit exceeded
     splashes.splice(0, count);
   }
 
   for (let i = 0; i < count; i++) {
-    const angle = startAngle + i * unitAngle;
+    // 生成均勻分布的球面坐標
+    const phi = (i / count) * Math.PI * 2;    // 水平角度均勻分布
+    const theta = maxTheta;                    // 固定垂直角度
+
+    // 將球面坐標轉換為方向向量
+    const dirX = Math.sin(theta) * Math.cos(phi);
+    const dirY = Math.cos(theta);
+    const dirZ = Math.sin(theta) * Math.sin(phi);
+
     splashes.push({
       x,
       y: 0,
       z,
       length,
-      angle,
+      dirX,
+      dirY,
+      dirZ,
       startTime: getTime()
     });
   }
@@ -64,7 +73,7 @@ export function updateSplashes() {
   // Update all buffers
   const positionData = new Float32Array(MAX_SPLASHES * 4);
   const timeData = new Float32Array(MAX_SPLASHES);
-  const angleData = new Float32Array(MAX_SPLASHES);
+  const directionData = new Float32Array(MAX_SPLASHES * 3);
 
   // Fill actual data
   splashes.forEach((s, i) => {
@@ -74,19 +83,23 @@ export function updateSplashes() {
     positionData[baseIndex + 2] = s.z;
     positionData[baseIndex + 3] = s.length;
     timeData[i] = s.startTime;
-    angleData[i] = s.angle;
+
+    const dirBaseIndex = i * 3;
+    directionData[dirBaseIndex] = s.dirX;
+    directionData[dirBaseIndex + 1] = s.dirY;
+    directionData[dirBaseIndex + 2] = s.dirZ;
   });
 
   // Update buffers using subdata
   splashBuffer.subdata(positionData);
   splashStartTimeBuffer.subdata(timeData);
-  splashAngleBuffer.subdata(angleData);
+  splashDirectionBuffer.subdata(directionData);
 }
 
-const splashWidth = .8;
+const splashWidth = 1;
 const splash = [
-  [0, -1, 0], [0, -1, 0], [splashWidth, 1, 0],
-  [0, -1, 0], [0, 1, 0], [splashWidth, 1, 0],
+  [-splashWidth/2, -1, 0], [-splashWidth/2, -1, 0], [0, 1, 0],
+  [-splashWidth/2, -1, 0], [splashWidth/2, -1, 0], [0, 1, 0],
 ];
 
 export const drawSplashes = regl({
@@ -100,13 +113,15 @@ export const drawSplashes = regl({
       stride: 16,  // 4 floats * 4 bytes
       offset: 0
     },
-    instanceAngle: {
-      buffer: splashAngleBuffer,
-      divisor: 1
-    },
     instanceStartTime: {
       buffer: splashStartTimeBuffer,
       divisor: 1
+    },
+    instanceDirection: {
+      buffer: splashDirectionBuffer,
+      divisor: 1,
+      stride: 12,  // 3 floats * 4 bytes
+      offset: 0
     }
   },
   uniforms: {
