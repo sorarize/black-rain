@@ -42,7 +42,7 @@ const rippleRadiusRangeMap = {
   Torrential: [100, 300],
 };
 
-export const INVERT = chance(.1) ? 0 : 1;
+export const INVERT = chance(.01) ? 0 : 1;
 export const SKY_HEIGHT = 2000;
 export const PLANE_SIZE = 600;
 export const RAIN_COUNT = rainCountMap[level];
