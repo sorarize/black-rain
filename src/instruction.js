@@ -4,7 +4,7 @@ const template = `
   <div class="instruction">
     <div>
       <h1>Black Rain</h1>
-      <p>Level: ${level}</p>
+      <p>Intensity: ${level}</p>
       <p class="hold">press and hold to slow time</p>
     </div>
   </div>
