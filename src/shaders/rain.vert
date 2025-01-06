@@ -9,7 +9,7 @@ void main() {
   vec3 pos = position;
 
   // 1. 計算目標點位置（在雨滴長度上的某個比例點）
-  float targetY = mix(-1.0, 1.0, timeScale * 3.);  // 在 [-1, 1] 範圍內插值
+  float targetY = mix(-1.0, 1.0, max(.5, timeScale * 3.));  // 在 [-1, 1] 範圍內插值
   pos.y = (position.y > 0.0) ? targetY : position.y;  // 只改變頂點
   pos.y *= instancePosition.w;
 
