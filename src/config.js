@@ -65,6 +65,7 @@ export const RAIN_SPEED = speedMap[level];
 export const RAIN_ANGLE = angleMap[level];
 export const RAIN_RIPPLE_DURATION = rippleDurationMap[level];
 export const RAIN_RIPPLE_RADIUS_RANGE = rippleRadiusRangeMap[level];
+export const RAIN_OPACITY = chance(.5) ? .2 : .8;
 export const rainIntensityFn = rainIndensityMap[level];
 
 const distance = 800;

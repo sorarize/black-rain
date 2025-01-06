@@ -1,6 +1,15 @@
 import rainVert from '../shaders/rain.vert';
 import rainFrag from '../shaders/rain.frag';
-import { SKY_HEIGHT, RAIN_COUNT, PLANE_SIZE, RAIN_SPEED, RAIN_LENGTH, RAIN_ANGLE, rainIntensityFn } from '../config';
+import {
+  SKY_HEIGHT,
+  RAIN_COUNT,
+  PLANE_SIZE,
+  RAIN_SPEED,
+  RAIN_LENGTH,
+  RAIN_ANGLE,
+  RAIN_OPACITY,
+  rainIntensityFn
+} from '../config';
 import { easeInCubic, random } from '../utils';
 import { regl } from '../renderer';
 import { timeScale, getTime } from '../time';
@@ -128,12 +137,13 @@ export const drawRain = regl({
     }
   },
   uniforms: {
-    view: regl.prop('view'),
     projection: regl.prop('projection'),
-    rainDirection: rainDirectionVec,
+    view: regl.prop('view'),
+    currentTime: regl.context('time'),
     timeScale: () => timeScale.value,
-    time: () => getTime(),
-    rainIntensity: () => getRainIntensity() // Add rain intensity uniform
+    rainDirection: () => rainDirectionVec,
+    rainIntensity: () => getRainIntensity(),
+    rainOpacity: () => RAIN_OPACITY,
   },
   blend: {
     enable: true,
