@@ -26,3 +26,7 @@ export const randomSign = () => {
 export const xx = (...args) => {
   console.log(...args);
 }
+
+export const chance = (chance) => {
+  return Math.random() < chance;
+}

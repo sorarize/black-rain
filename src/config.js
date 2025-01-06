@@ -1,4 +1,4 @@
-import { random, pick, randomSign } from "./utils";
+import { random, pick, randomSign, chance } from "./utils";
 
 export const level = pick({
   Drizzle: 1,
@@ -30,6 +30,7 @@ const angleMap = {
   Torrential: 20,
 };
 
+export const INVERT = chance(.1) ? 0 : 1;
 export const SKY_HEIGHT = 2000;
 export const PLANE_SIZE = 600;
 export const RAIN_COUNT = rainCountMap[level];

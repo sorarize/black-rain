@@ -1,6 +1,7 @@
 import { regl, fbo } from '../renderer.js';
 import postVert from '../shaders/post.vert?raw';
 import postFrag from '../shaders/post.frag?raw';
+import { INVERT } from '../config.js';
 
 // Create post-processing quad
 const quadVertices = [
@@ -20,6 +21,7 @@ export const drawPost = regl({
   },
   uniforms: {
     texture: () => fbo,
+    invert: INVERT
   },
   depth: { enable: false },
   count: 6
