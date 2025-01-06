@@ -23,4 +23,4 @@ const template = `
   document.body.addEventListener('mousedown', hideInstruction);
   document.body.addEventListener('touchstart', hideInstruction);
 
-  setTimeout(hideInstruction, 5000);
+  setTimeout(hideInstruction, 8000);
