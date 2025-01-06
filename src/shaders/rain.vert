@@ -13,7 +13,7 @@ void main() {
   vec3 pos = position;
 
   // Decide if this raindrop should be visible
-  vDiscard = instanceIntensity < rainIntensity ? 0.0 : 1.0;
+  vDiscard = instanceIntensity > rainIntensity ? 1.0 : 0.0;
 
   // 1. 計算目標點位置（在雨滴長度上的某個比例點）
   float targetY = mix(-1.0, 1.0, max(.5, timeScale * 3.));  // 在 [-1, 1] 範圍內插值

@@ -20,8 +20,8 @@ const speedMap = {
 
 const rainCountMap = {
   Drizzle: 200,
-  Shower: 2000,
-  Torrential: 5000,
+  Shower: 3000,
+  Torrential: 8000,
 };
 
 const angleMap = {
@@ -42,6 +42,20 @@ const rippleRadiusRangeMap = {
   Torrential: [100, 300],
 };
 
+const rainIndensityMap = {
+  Drizzle: t => {
+    t = t * .2;
+    return .2 + (Math.sin(t) + 1) * .5 * .8;
+  },
+  Shower: t => {
+    t = t * .1;
+    return .1 + (Math.sin(t) + 1) * .5 * .9;
+  },
+  Torrential: t => {
+    return .5 + (Math.sin(t) + 1) * .5 * .5;
+  },
+};
+
 export const INVERT = chance(.01) ? 0 : 1;
 export const SKY_HEIGHT = 2000;
 export const PLANE_SIZE = 600;
@@ -51,6 +65,7 @@ export const RAIN_SPEED = speedMap[level];
 export const RAIN_ANGLE = angleMap[level];
 export const RAIN_RIPPLE_DURATION = rippleDurationMap[level];
 export const RAIN_RIPPLE_RADIUS_RANGE = rippleRadiusRangeMap[level];
+export const rainIntensityFn = rainIndensityMap[level];
 
 const distance = 800;
 export const INITIAL_CAMERA = {

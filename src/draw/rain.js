@@ -1,7 +1,7 @@
 import rainVert from '../shaders/rain.vert';
 import rainFrag from '../shaders/rain.frag';
-import { SKY_HEIGHT, RAIN_COUNT, PLANE_SIZE, RAIN_SPEED, RAIN_LENGTH, RAIN_ANGLE } from '../config';
-import { random, noise } from '../utils';
+import { SKY_HEIGHT, RAIN_COUNT, PLANE_SIZE, RAIN_SPEED, RAIN_LENGTH, RAIN_ANGLE, rainIntensityFn } from '../config';
+import { easeInCubic, random } from '../utils';
 import { regl } from '../renderer';
 import { timeScale, getTime } from '../time';
 import { addCircle } from './circle';
@@ -44,9 +44,22 @@ function resetRain(drop) {
   drop.intensity = Math.random();  // Reset intensity when recycling
 }
 
-// Calculate rain intensity
-function getRainIntensity(time) {
-  return 0.5 + noise(time * 0.2) * 0.5;
+function getRainIntensity() {
+  const waitDuration = 0.1;
+  const fadeInDuration = 6;
+  const startTime = getTime();
+
+  if (startTime < waitDuration) {
+    return 0;
+  }
+
+  const fadeProgress = Math.min((startTime - waitDuration) / fadeInDuration, 1.0);
+
+  if (fadeProgress < 1.0) {
+    return easeInCubic(fadeProgress);
+  }
+
+  return rainIntensityFn(getTime());
 }
 
 // Update rain positions
@@ -56,7 +69,7 @@ export function updateRain() {
   lastTime = time;
 
   const moveDistance = RAIN_SPEED * deltaTime * 60;
-  const intensity = getRainIntensity(time);
+  const intensity = getRainIntensity();
 
   rainPositions.forEach(drop => {
     // Calculate x and y movement based on angle
@@ -120,7 +133,7 @@ export const drawRain = regl({
     rainDirection: rainDirectionVec,
     timeScale: () => timeScale.value,
     time: () => getTime(),
-    rainIntensity: () => getRainIntensity(getTime()) // Add rain intensity uniform
+    rainIntensity: () => getRainIntensity() // Add rain intensity uniform
   },
   blend: {
     enable: true,

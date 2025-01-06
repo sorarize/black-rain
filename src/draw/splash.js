@@ -28,8 +28,8 @@ const splashAngleBuffer = regl.buffer({
 });
 
 export function addSplash(x, z) {
-  const length = random(1, 3);
-  const count = ~~random(3, 6);
+  const length = random(1, 4);
+  const count = ~~random(3, 8);
   const unitAngle = 15 * Math.PI / 180;
   const wholeAngle = unitAngle * (count - 1);
   const startAngle = -wholeAngle / 2;

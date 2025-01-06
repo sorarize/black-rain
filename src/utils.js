@@ -37,3 +37,7 @@ const noise2D = createNoise2D();
 export const noise = (x) => {
   return (noise2D(x, 0) + 1) * 0.5;  // Convert from [-1,1] to [0,1]
 }
+
+export const easeInCubic = (x) => {
+  return x * x * x;
+}
