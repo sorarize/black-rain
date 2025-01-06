@@ -28,7 +28,7 @@ const splashDirectionBuffer = regl.buffer({
 });
 
 export function addSplash(x, z) {
-  const length = random(1, 3);
+  const length = random(1, 2) * 1.2;
   const count = ~~random(6, 18);
 
   // 控制水花散射的角度範圍（0 表示垂直向上，PI/2 表示水平）
@@ -41,8 +41,8 @@ export function addSplash(x, z) {
 
   for (let i = 0; i < count; i++) {
     // 生成均勻分布的球面坐標
-    const phi = (i / count) * Math.PI * 2;    // 水平角度均勻分布
-    const theta = maxTheta;                    // 固定垂直角度
+    const phi = random(Math.PI * 2);    // 水平角度均勻分布
+    const theta = random(maxTheta);                    // 固定垂直角度
 
     // 將球面坐標轉換為方向向量
     const dirX = Math.sin(theta) * Math.cos(phi);
